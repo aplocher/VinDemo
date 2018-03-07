@@ -1,0 +1,1 @@
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="VinDemo.Api.WebApiApplication" Language="C#" %>

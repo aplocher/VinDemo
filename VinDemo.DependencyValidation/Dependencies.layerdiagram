@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="8fa0aab0-43f9-4074-a8f7-4cae7b89c746" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <comments>
+    <comment Id="b7e5024e-12b2-4f0c-a8f2-ab12776d064c" name="Comment1">
+      <body>* Interfaces
+* POCO's
+* Extensions</body>
+    </comment>
+    <comment Id="985f8f17-7f32-450f-8fc9-0ea2aad2399d" name="Comment2">
+      <body>Data layer, the components responsible for knowing how to talk to SQL Server (or other data storage system)</body>
+    </comment>
+    <comment Id="63c80a40-de28-4fe1-9a07-d737a4538f9b" name="Comment21">
+      <body>Data layer abstraction, allowing the rest of the app to simply deal with the abstraction and not know anything about the underlying data storage implementation</body>
+    </comment>
+    <comment Id="154ff3aa-7824-4935-a2ee-1b1670bc8bae" name="Comment211">
+      <body>Business logic</body>
+    </comment>
+    <comment Id="9d5b3650-6bc8-4a9a-a09e-423050e934c5" name="Comment3">
+      <body>Application entry points / Composition Root</body>
+    </comment>
+  </comments>
+  <layers>
+    <layer Id="dcb7c2a4-6a5d-4653-938c-524316583903" name="Presentation">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="50d8cb64-0736-4e39-ad83-a8015e976c3f" direction="Forward">
+          <layerMoniker Id="a73f8054-38da-4a5b-81e6-01225146a92c" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <childLayers>
+        <layer Id="38c71db7-cdf6-4111-85dc-1e11754f7d03" name="VinDemo.Web">
+          <description>MVC project</description>
+          <references>
+            <reference Id="1db9f2a6-39b1-4d85-85f1-d97f3e2370a5" name="VinDemo.Web">
+              <ArtifactNode Label="VinDemo.Web" Category="CodeSchema_Project" Id="(Assembly=../VinDemo.Web/VinDemo.Web.csproj)">
+                <Category Ref="File" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=VinDemo.Web)" Label="VinDemo.Web.dll" Category="CodeSchema_Assembly">
+                <Category Ref="FileSystem.Category.FileOfType.dll" />
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+        <layer Id="1009d820-a6a0-4847-b8c1-1f76df5ee615" name="VinDemo.Api">
+          <description>Web API project</description>
+          <references>
+            <reference Id="8e224703-7c65-4ec9-b3be-d1b10544d2a5" name="VinDemo.Api">
+              <ArtifactNode Label="VinDemo.Api" Category="CodeSchema_Project" Id="(Assembly=../VinDemo.Api/VinDemo.Api.csproj)">
+                <Category Ref="File" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=VinDemo.Api)" Label="VinDemo.Api.dll" Category="CodeSchema_Assembly">
+                <Category Ref="FileSystem.Category.FileOfType.dll" />
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+        <layer Id="cade7bfc-55e9-44a7-bfb2-ed79e777494b" name="VinDemo.Tests">
+          <dependencyToLayers>
+            <dependencyFromLayerToLayer Id="d9430a08-0670-4246-9976-3bb1a7c14ff8" direction="Forward">
+              <layerMoniker Id="38c71db7-cdf6-4111-85dc-1e11754f7d03" />
+            </dependencyFromLayerToLayer>
+            <dependencyFromLayerToLayer Id="b26154e8-488d-4e00-929a-3dcde53a9ac9" direction="Forward">
+              <layerMoniker Id="c365bb72-e323-450b-918d-b83828a5c1a5" />
+            </dependencyFromLayerToLayer>
+          </dependencyToLayers>
+          <references>
+            <reference Id="f6e3b0f1-7588-4413-8578-e8cf1f27de13" name="VinDemo.Tests">
+              <ArtifactNode Label="VinDemo.Tests" Category="CodeSchema_Project" Id="(Assembly=../VinDemo.Tests/VinDemo.Tests.csproj)">
+                <Category Ref="File" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=VinDemo.Web.Tests)" Label="VinDemo.Web.Tests.dll" Category="CodeSchema_Assembly">
+                <Category Ref="FileSystem.Category.FileOfType.dll" />
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+      </childLayers>
+    </layer>
+    <layer Id="c365bb72-e323-450b-918d-b83828a5c1a5" name="Model">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="ad78abb4-4c03-4d5e-a1ca-7413be118eec" direction="Forward">
+          <layerMoniker Id="a73f8054-38da-4a5b-81e6-01225146a92c" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <childLayers>
+        <layer Id="43194d53-767c-4115-ae75-39a35890e4bd" name="VinDemo.Model">
+          <references>
+            <reference Id="6b5988e8-96de-46f5-b2cc-d43b052457ec" name="VinDemo.Model">
+              <ArtifactNode Label="VinDemo.Model" Category="CodeSchema_Project" Id="(Assembly=../VinDemo.Model/VinDemo.Model.csproj)">
+                <Category Ref="File" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=VinDemo.Model)" Label="VinDemo.Model.dll" Category="CodeSchema_Assembly">
+                <Category Ref="FileSystem.Category.FileOfType.dll" />
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+      </childLayers>
+    </layer>
+    <layer Id="a73f8054-38da-4a5b-81e6-01225146a92c" name="Domain">
+      <childLayers>
+        <layer Id="081b579b-626e-4d20-a1a2-e80f0e9840f1" name="VinDemo.Domain">
+          <references>
+            <reference Id="ea60be93-54c1-46b4-9a4b-41d6ab2f4786" name="VinDemo.Domain">
+              <ArtifactNode Label="VinDemo.Domain" Category="CodeSchema_Project" Id="(Assembly=../VinDemo.Domain/VinDemo.Domain.csproj)">
+                <Category Ref="File" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=VinDemo.Domain)" Label="VinDemo.Domain.dll" Category="CodeSchema_Assembly">
+                <Category Ref="FileSystem.Category.FileOfType.dll" />
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+      </childLayers>
+    </layer>
+    <layer Id="4171a333-bc9e-48e2-a218-3d849e02d0d7" name="Repository">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="24f329b5-2b37-4dcd-8420-81c58b77d95b" direction="Forward">
+          <layerMoniker Id="a73f8054-38da-4a5b-81e6-01225146a92c" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <childLayers>
+        <layer Id="0afd3525-e83e-42a5-a2b8-ca77c66984ab" name="VinDemo.Repository">
+          <references>
+            <reference Id="bbfbb753-2f6f-4fb7-96af-6fd976468ebd" name="VinDemo.Repository">
+              <ArtifactNode Label="VinDemo.Repository" Category="CodeSchema_Project" Id="(Assembly=../VinDemo.Repository/VinDemo.Repository.csproj)">
+                <Category Ref="File" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=VinDemo.Repository)" Label="VinDemo.Repository.dll" Category="CodeSchema_Assembly">
+                <Category Ref="FileSystem.Category.FileOfType.dll" />
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+      </childLayers>
+    </layer>
+    <layer Id="191db158-3af1-4d46-832d-05b46d9e0aeb" name="Data Access&#xD;&#xA;">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="d2360701-322e-40fc-8ddc-bda0f5dcba70" direction="Forward">
+          <layerMoniker Id="a73f8054-38da-4a5b-81e6-01225146a92c" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <childLayers>
+        <layer Id="8d11f43d-3c2b-42a2-81c8-9a79a54bb316" name="VinDemo.DataAccess.SqlServer">
+          <references>
+            <reference Id="70ebeb99-7f23-4ec7-bd1c-fb2cca2acaa3" name="VinDemo.DataAccess.SqlServer">
+              <ArtifactNode Label="VinDemo.DataAccess.SqlServer" Category="CodeSchema_Project" Id="(Assembly=../VinDemo.DataAccess.SqlServer/VinDemo.DataAccess.SqlServer.csproj)">
+                <Category Ref="File" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=VinDemo.DataAccess.SqlServer)" Label="VinDemo.DataAccess.SqlServer.dll" Category="CodeSchema_Assembly">
+                <Category Ref="FileSystem.Category.FileOfType.dll" />
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+      </childLayers>
+    </layer>
+  </layers>
+</layerModel>

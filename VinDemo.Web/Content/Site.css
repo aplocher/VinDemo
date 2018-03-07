@@ -1,0 +1,90 @@
+﻿body {
+    padding-bottom: 20px;
+    padding-top: 0px;
+}
+
+/* Set padding to keep content from hitting the edges */
+
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.navbar {
+    margin-bottom: 25px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.filter-container {
+    position: relative;
+    height: 21px;
+    display: block;
+    width: 100%;
+    padding: 2px;
+}
+
+    .filter-container input {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0px;
+        right: 0;
+        margin: 0;
+        font-size: 16px;
+        width: 100%;
+        border: 1px solid black;
+        background-color: #333333;
+        padding: 4px;
+    }
+
+input.filter-input {
+    color: white;
+}
+
+    input.filter-input:focus {
+        background-color: white;
+        color: black;
+    }
+
+.sort-icon {
+    vertical-align: bottom;
+    margin: 0 0 0 5px;
+    color: orange;
+    font-size: 140%;
+}
+
+.fa-filter {
+    position: absolute;
+    right: 4px;
+    bottom: 3px;
+    color: black;
+}
+
+.filter-active {
+    color: orange;
+}
+
+#clearFiltersLink {
+    font-weight: normal;
+    display: none;
+}
+
+th {
+    vertical-align: top !important;
+    white-space: nowrap
+}

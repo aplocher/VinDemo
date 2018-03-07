@@ -1,0 +1,58 @@
+﻿@model VinDemo.Web.ViewModels.Members.DetailViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title" id="modalHeader">Member Detail</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@using (Ajax.BeginForm("SaveMember", "Members", new AjaxOptions
+{
+    LoadingElementId = "loadingSpinner",
+    UpdateTargetId = "modalContent",
+    OnSuccess = "onPopupSaveSuccess"
+}, new {novalidate = ""}))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Member.MemberId)
+    @Html.HiddenFor(m => m.Member.CreatedDate)
+    @Html.HiddenFor(m => m.Member.ModifiedDate)
+    @Html.HiddenFor(m => m.Member.DeactivatedDate)
+    <div class="modal-body" id="modalBody">
+        @Html.ValidationSummary()
+
+        <div class="form-group row">
+            @Html.LabelFor(m => m.Member.Username, new { @class= "col-4 col-form-label col-form-label-lg" })
+            <div class="col-8">@Html.EditorFor(m => m.Member.Username)</div>
+        </div>
+
+        <div class="form-group row">
+            @Html.LabelFor(m => m.Member.FirstName, new { @class = "col-4 col-form-label col-form-label-lg" })
+            <div class="col-8">@Html.EditorFor(m => m.Member.FirstName)</div>
+        </div>
+
+        <div class="form-group row">
+            @Html.LabelFor(m => m.Member.LastName, new { @class = "col-4 col-form-label col-form-label-lg" })
+            <div class="col-8">@Html.EditorFor(m => m.Member.LastName)</div>
+        </div>
+
+        <div class="form-group row">
+            @Html.LabelFor(m => m.Member.Email, new { @class = "col-4 col-form-label col-form-label-lg" })
+            <div class="col-8">@Html.EditorFor(m => m.Member.Email)</div>
+        </div>
+
+        <div class="form-group row">
+            @Html.LabelFor(m => m.Member.PhoneNumber, new { @class = "col-4 col-form-label col-form-label-lg" })
+            <div class="col-8">@Html.EditorFor(m => m.Member.PhoneNumber)</div>
+        </div>
+
+        <div class="form-group row">
+            @Html.LabelFor(m => m.Member.DateOfBirth, new { @class = "col-4 col-form-label col-form-label-lg" })
+            <div class="col-8">@Html.EditorFor(m => m.Member.DateOfBirth)</div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Save Member</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+    </div>
+}

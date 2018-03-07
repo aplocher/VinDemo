@@ -1,0 +1,464 @@
+﻿@model VinDemo.Web.ViewModels.Members.IndexViewModel
+@{
+    ViewBag.Title = "Members";
+}
+
+<h2 class="float-left">Members</h2>
+<Button data-toggle="modal" data-target="#modalDialog" class="btn btn-primary float-right">Add Member</Button>
+<div id="tableContainer" data-isusernameavailurl="@Url.Action("IsUsernameAvailable")">
+    <table id="memberTable" class="table table-striped"
+           data-sort-by="@Model.SortBy"
+           data-sort-descending="@Model.SortByDescending"
+           data-page-number="@Model.PageNumber">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col" class="sortableCol filterableCol" data-sort="Username">
+                    @Html.DisplayNameFor(m => m.MemberTableViewModel.Members[0].Username)
+                </th>
+                <th scope="col" class="sortableCol filterableCol" data-sort="FirstName">
+                    @Html.DisplayNameFor(m => m.MemberTableViewModel.Members[0].FirstName)
+                </th>
+                <th scope="col" class="sortableCol filterableCol" data-sort="LastName">
+                    @Html.DisplayNameFor(m => m.MemberTableViewModel.Members[0].LastName)
+                </th>
+                <th scope="col" class="sortableCol filterableCol" data-sort="Email">
+                    @Html.DisplayNameFor(m => m.MemberTableViewModel.Members[0].Email)
+                </th>
+                <th scope="col" class="sortableCol filterableCol" data-sort="PhoneNumber">
+                    @Html.DisplayNameFor(m => m.MemberTableViewModel.Members[0].PhoneNumber)
+                </th>
+                <th scope="col" class="sortableCol" data-sort="DateOfBirth">
+                    @Html.DisplayNameFor(m => m.MemberTableViewModel.Members[0].DateOfBirth)
+                </th>
+                <th scope="col" colspan="3" style="vertical-align: bottom !important;">
+                    <a href="#" id="clearFiltersLink">clear all filters</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @*@{ Html.RenderAction("MemberTable", Model.MemberTableViewModel); }*@
+            @Html.Partial("MemberTable", Model.MemberTableViewModel)
+        </tbody>
+    </table>
+
+    @if (Model.MemberTableViewModel.ColumnFilters != null && Model.MemberTableViewModel.ColumnFilters.Count > 0)
+    {
+        foreach (var filter in Model.MemberTableViewModel.ColumnFilters)
+        {
+            <input type="hidden" id="@(filter.Key+"Hidden")" name="@(filter.Key+"Hidden")" value="@filter.Value" />
+        }
+    }
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item page-item-previous @(Model.MemberTableViewModel.Members.HasPreviousPage ? null : "disabled")">
+                <a class="page-link page-link-previous" href="#">Previous</a>
+            </li>
+            @{ var pages = Model.MemberTableViewModel.Members.GetPagesToShow(10); }
+            @foreach (var page in pages)
+            {
+                <li class="page-item page-item-number @(Model.MemberTableViewModel.Members.PageNumber == page ? "active" : null)">
+                    <a class="page-link page-link-number" href="#">@page</a>
+                </li>
+            }
+
+            <li class="page-item page-item-next @(Model.MemberTableViewModel.Members.HasNextPage ? null : "disabled")">
+                <a class="page-link page-link-next" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<div class="modal fade" id="modalDialog" tabindex="-1" role="dialog" aria-labelledby="modalHeader" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modalContent">
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        // jq onload
+        $(function() {
+            $('#modalDialog').on('show.bs.modal',
+                function(event) {
+                    var url = "/Members/Detail/";
+
+                    var button = $(event.relatedTarget);
+                    var memberId = 0;
+                    if ($(button).data('id')) {
+                        memberId = $(button).data('id');
+                        url += memberId;
+                    }
+
+                    $.ajax({
+                        method: 'POST',
+                        url: url,
+                        success: function(data) {
+                            $('#modalContent').html(data);
+                            $('#modalContent').data('id', memberId);
+                            reinitPopupJs();
+                        }
+                    });
+                });
+
+            $('#modalDialog').on('hidden.bs.modal',
+                function() {
+                    $(this).removeData('bs.modal');
+                });
+
+            initGridJs();
+        });
+
+        // various getters/setters
+        function getCurPageNum() {
+            return parseInt($("#memberTable").data("page-number"));
+        }
+
+        function setCurPageNum(value) {
+            $("#memberTable").data("page-number", value);
+        }
+
+        function getCurPageCount() {
+            return $("#memberTable").data("page-count");
+        }
+
+        function setCurPageCount(value) {
+            $("#memberTable").data("page-count", value);
+        }
+
+        function getCurSortBy() {
+            return $("#memberTable").data("sort-by");
+        }
+
+        function setCurSortBy(value) {
+            $("#memberTable").data("sort-by", value);
+        }
+
+        function getCurSortDesc() {
+            return $("#memberTable").data("sort-desc");
+        }
+
+        function setCurSortDesc(value) {
+            $("#memberTable").data("sort-desc", value);
+        }
+
+        function getHasNextPage() {
+            return $("#memberTable").data("has-next");
+        }
+
+        function setHasNextPage(value) {
+            $("#memberTable").data("has-next", value);
+        }
+
+        function getHasPreviousPage() {
+            return $("#memberTable").data("has-prev");
+        }
+
+        function setHasPreviousPage(value) {
+            $("#memberTable").data("has-prev", value);
+        }
+
+        // init funcs
+        function initGridJs() {
+            $(".pagination").on("click",
+                ".page-link-number",
+                function() {
+                    var pageNumber = parseInt($(this).html());
+                    loadTable(pageNumber);
+                });
+
+            $(".pagination").on("click",
+                ".page-link-previous",
+                function() {
+                    gotoPreviousPage();
+                });
+
+            $(".pagination").on("click",
+                ".page-link-next",
+                function() {
+                    gotoNextPage();
+                });
+
+            makeColumnsSortable();
+            makeColumnsFilterable();
+
+
+            $("#tableContainer").on("click",
+                ".delete-row",
+                function() {
+                    var name = $(this).closest("tr").children("td").first().html();
+                    var id = $(this).data("id");
+                    showBootstrapConfirm("<p>Are you sure you want to delete <b>" + name + "</b>?</p>",
+                        "Confirm deletion",
+                        function() {
+                            deleteMember(id);
+                            $("#confirmDialog").modal("hide");
+                        },
+                        function() {
+                            alert('cancel');
+                            $("#confirmDialog").modal("hide");
+                        });
+                });
+
+            $("#clearFiltersLink").click(function() {
+                $(".filter-input").val('');
+                $(".filter-input").trigger("input");
+
+                refreshFilterIndicators();
+            });
+        }
+
+        function reinitPopupJs() {
+            $('#modalDialog').data('bs.modal').handleUpdate();
+
+            var form = $("#modalBody").closest("form");
+            form.removeData('validator');
+            form.removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse(form);
+
+            $("#Member_Username").data("id",);
+        }
+
+        function makeColumnsSortable() {
+            $("th.sortableCol").each(function() {
+                var sort = getCurSortBy();
+                var desc = getCurSortDesc();
+
+                var dataSort = $(this).data('sort');
+
+                $(this).append(
+                    '<i class="fas fa-caret-up sort-icon" style="' +
+                    (sort === dataSort && !desc ? '' : 'display:none') +
+                    '"></i>' +
+                    '<i class="fas fa-caret-down sort-icon" style="' +
+                    (sort === dataSort && desc ? '' : 'display:none') +
+                    '"></i>');
+                var link =
+                    $("<a href='#' style='color:white'></a>")
+                        .data("sort", dataSort)
+                        .click(function() {
+                            var sort = getCurSortBy();
+                            var desc = getCurSortDesc();
+                            var dataSort = $(this).data('sort');
+                            if (sort === dataSort) {
+                                desc = !desc;
+                            } else {
+                                desc = false;
+                            }
+                            changeSort(dataSort, desc);
+                        });
+                $(this).wrapInner(link);
+            });
+        }
+
+        function makeColumnsFilterable() {
+            $('th.filterableCol').each(function() {
+                var dataSort = $(this).data('sort');
+                var newFilter = $("<div class='filter-container' style='font-size:14px;'> </div>").append($(
+                        "<input type='text' placeholder='(filter)' class='filter-input' data-field='" +
+                        dataSort +
+                        "' name='ColumnFilters[" +
+                        dataSort +
+                        "]' id='" +
+                        dataSort +
+                        "FilterInput' value='" +
+                        ($("#" + dataSort + "Hidden").length > 0 ? $("#" + dataSort + "Hidden").val() : "") +
+                        "' />" +
+                        "<i class='fas fa-filter'></i>")
+                    .on('propertychange input',
+                        function(e) {
+                            var valueChanged = false;
+
+                            if (e.type == 'propertychange') {
+                                valueChanged = e.originalEvent.propertyName == 'value';
+                            } else {
+                                valueChanged = true;
+                            }
+
+                            if (valueChanged) {
+                                refreshFilterIndicators();
+                                loadTable(1);
+                            }
+                        }));
+                $(this).append(newFilter);
+            });
+        }
+
+        // page navigation funcs
+        function gotoPreviousPage() {
+            var page = parseInt(getCurPageNum());
+            loadTable(--page);
+        }
+
+        function gotoNextPage() {
+            var page = parseInt(getCurPageNum());
+            loadTable(++page);
+        }
+
+        // main func to (re)load the rows
+        function loadTable(pageNumber) {
+            var sort = getCurSortBy();
+            var desc = getCurSortDesc();
+            setCurPageNum(pageNumber);
+
+            var filters = $('.filter-input').map(function() {
+                var key = $(this).data('field');
+                return {
+                    'Key': key,
+                    'Value': this.value
+                };
+            }).get();
+
+            $.ajax({
+                method: 'POST',
+                url: '@Url.Action("GetMemberTablePage")',
+                data: { "filters": filters, "page": pageNumber, "sort": sort, "desc": desc },
+                success: function(data) {
+                    $("#tableContainer tbody").html(data.MembersView);
+                    setHasNextPage(data.HasNextPage);
+                    setHasPreviousPage(data.HasPreviousPage);
+                    setCurPageCount(data.PageCount);
+
+                    refreshPageIndicators();
+                }
+            });
+        }
+
+        // change sort
+        function changeSort(sortBy, isDescending) {
+            if (!isDescending)
+                isDescending = false;
+
+            setCurSortBy(sortBy);
+            setCurSortDesc(isDescending);
+
+            refreshSortIndicators();
+            loadTable(1);
+        }
+
+        // functions to refresh various UI indicators
+        function refreshFilterIndicators() {
+            var any = false;
+            $(".filter-input").each(function() {
+                var value = $(this).val();
+                if (value) {
+                    $(this).parent().find('.fa-filter').css('color', 'orange');
+                    any = true;
+                } else {
+                    $(this).parent().find('.fa-filter').css('color', 'black');
+                }
+            });
+
+            if (any) {
+                $("#clearFiltersLink").css('display', 'block');
+            }
+        }
+
+        function refreshSortIndicators() {
+            var sort = getCurSortBy();
+            var desc = getCurSortDesc();
+            $(".sortableCol .sort-icon").css("display", "none");
+            $('th[data-sort="' + sort + '"]').find(".sort-icon").each(
+                function() {
+                    if (($(this).hasClass("fa-caret-down") && desc) ||
+                        ($(this).hasClass("fa-caret-up") && !desc)) {
+                        $(this).css("display", "inline-block");
+                    }
+                });
+        }
+
+        function refreshPageIndicators() {
+            var curPage = getCurPageNum();
+            var pageCount = getCurPageCount();
+            if (!pageCount) {
+                pageCount = 1;
+            }
+
+            $("ul.pagination").empty();
+            $("ul.pagination")
+                .append(
+                    '<li class="page-item page-item-previous"><a class="page-link page-link-previous" href="#">Previous</a></li>');
+
+            for (var i = 1; i <= pageCount; i++) {
+                $("ul.pagination")
+                    .append('<li class="page-item page-item-number"><a class="page-link page-link-number" href="#">' +
+                        i +
+                        '</a></li>');
+            }
+
+            $("ul.pagination")
+                .append(
+                    '<li class="page-item page-item-next"><a class="page-link page-link-next" href="#">Next</a></li>');
+
+
+            $(".page-item-number").removeClass("active");
+            $(".page-item-number").filter(function() {
+                return $(this).find(".page-link-number").text() == curPage;
+            }).addClass("active");
+
+            $(".page-item-previous").removeClass("disabled");
+            $(".page-item-next").removeClass("disabled");
+            var hasPrev = getHasPreviousPage();
+            if (!hasPrev) {
+                $(".page-item-previous").addClass("disabled");
+            }
+            if (!getHasNextPage()) {
+                $(".page-item-next").addClass("disabled");
+            }
+        }
+
+        // confirm dialog (only used for deleting currently)
+        function loadBootstrapConfirmDomElements(text, title, yesResultFunction, noResultFunction) {
+            $.get("/Content/Templates/Confirm.html",
+                function(data) {
+                    if ($("#confirmDialog").length == 0) {
+                        $("body").append(data);
+
+                        $("#confirmDialog").modal();
+                    }
+
+                    showBootstrapConfirm(text, title, yesResultFunction, noResultFunction);
+                });
+        }
+
+        function showBootstrapConfirm(text, title, yesResultFunction, noResultFunction) {
+            if ($("#confirmDialog").length == 0) {
+                loadBootstrapConfirmDomElements(text, title, yesResultFunction, noResultFunction);
+            } else {
+                if (!title) {
+                    title = "";
+                }
+
+                if (!text) {
+                    text = "";
+                }
+
+                $("#confirmDialog").find(".btn-dialog-no").off("click");
+                $("#confirmDialog").find(".btn-dialog-yes").off("click");
+                $("#confirmDialog").find(".btn-dialog-no").click(noResultFunction);
+                $("#confirmDialog").find(".btn-dialog-yes").click(yesResultFunction);
+
+                $("#confirmDialog").modal("show");
+                $("#confirmDialog").find(".modal-title").html(title);
+                $("#confirmDialog").find(".modal-body").html(text);
+            }
+        }
+
+        // ajax call to delete (deactivate) 
+        function deleteMember(id) {
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("DeleteMember")/" + id,
+                success: function(data) {
+                    loadTable(getCurPageNum());
+                }
+            });
+        }
+
+        function onPopupSaveSuccess() {
+            reinitPopupJs();
+            loadTable(getCurPageNum());
+            $("#modalDialog").modal("hide");
+        }
+    </script>
+}

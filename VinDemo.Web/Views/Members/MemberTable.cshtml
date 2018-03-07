@@ -1,0 +1,26 @@
+﻿@model VinDemo.Web.ViewModels.Members.MemberTableViewModel
+
+
+@foreach (var member in Model.Members)
+{
+    <tr>
+        <td>@Html.DisplayFor(m => member.Username)</td>
+        <td>@Html.DisplayFor(m => member.FirstName)</td>
+        <td>@Html.DisplayFor(m => member.LastName)</td>
+        <td>@Html.DisplayFor(m => member.Email)</td>
+        <td>@Html.DisplayFor(m => member.PhoneNumber)</td>
+        <td>@Html.DisplayFor(m => member.DateOfBirth)</td>
+        <td>
+            <small>
+                Created: @member.CreatedDate.Value.ToString("MM/dd/yy HH:mm")<br />
+                Modified: @member.ModifiedDate.Value.ToString("MM/dd/yy HH:mm")
+            </small>
+        </td>
+        <td>
+            <a href="#" data-toggle="modal" data-target="#modalDialog" data-id="@Html.Raw(member.MemberId)">Edit</a>
+        </td>
+        <td>
+            <a href="#" class="text-danger delete-row" data-id="@Html.Raw(member.MemberId)">Delete</a>
+        </td>
+    </tr>
+}
